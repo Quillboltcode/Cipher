@@ -13,7 +13,7 @@ class Vote {
 
     public function __construct() {
         $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = 
     }
 
     public function create() {

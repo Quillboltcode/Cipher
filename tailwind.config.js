@@ -3,6 +3,7 @@ module.exports = {
   content: [ 
     './*.php',
     './views/**/*.{php,html,html.php}',
+    './views/partials/*.{php,html,html.php}',
     './views/*.php',   
     './**/*.php',
     './**/*.html',

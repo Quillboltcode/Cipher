@@ -1,0 +1,39 @@
+# DirectorySlash Off
+# Options FollowSymLinks Indexes
+# DirectoryIndex index.php
+
+# <FileMatch *.{py.php,exe}>
+#     Order Allow,Deny
+#     Deny from All
+# </FileMatch>
+# <IfModule mod_rewrite.c>
+
+
+#     RewriteEngine on
+#     RewriteBase /
+
+#     RewriteRule ^$ index\.php - [L]
+#     # Redirect all requests to index.php except for actual files or directories
+#     RewriteCond %{REQUEST_FILENAME}  -d
+#     RewriteRule  ^.*$  -  [L]
+#     RewriteCond %{REQUEST_FILENAME}  -f
+#     RewriteRule  ^.*$  -  [L]
+#     RewriteRule ^.*$    index.php [L]
+
+# </IfModule>
+# Temporary fix
+Options -MultiViews
+RewriteEngine On
+RewriteBase /Cipher/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteBase /
+#   RewriteCond %{REQUEST_FILENAME} !-d
+#   RewriteCond %{REQUEST_FILENAME} !-f
+#   RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+# </IfModule>

@@ -1,4 +1,5 @@
 <?php
+
 spl_autoload_register(function ($class_name) {
     $directories = [
         'controllers/',
@@ -14,3 +15,4 @@ spl_autoload_register(function ($class_name) {
     }
 });
 ?>
+
