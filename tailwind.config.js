@@ -5,6 +5,7 @@ module.exports = {
     './app/**/*.{php,html,html.php}',
     './views/**/*.{php,html,html.php}',
     './views/partials/*.{php,html,html.php}',
+    './views/user/*.{php,html.php}',
     './views/*.php',   
     './**/*.php',
     './**/*.html',

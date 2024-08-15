@@ -93,4 +93,20 @@ class Authenticator {
             return false;
         }
     }
+
+    public function isAdmin() {
+        if ($this->isLoggedIn()) {
+            $query = 'SELECT role_id FROM Users WHERE user_id = :user_id';
+            $this->db->query($query);
+            $this->db->bind(':user_id', $_SESSION['user_id']);
+            $row = $this->db->single();
+            if ($row->role_id == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

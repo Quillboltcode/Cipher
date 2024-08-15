@@ -62,7 +62,8 @@ class QuestionController extends Controller{
                 }
 
                 // Validate image file
-                $target_dir = 'public/images/';
+
+                $target_dir = URLROOT . 'uploads/';
                 $target_file = $target_dir . time() . $_SESSION['user_id'] . '_' . basename($_FILES['image_path']['name'][0]);
                 $uploadOk = 1;
                 $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -107,7 +108,7 @@ class QuestionController extends Controller{
 
             // Create question
             $this->questionmodel->createQuestion($data);
-            header('Location: ' . URLROOT . '/questions');
+            header('Location: ' . URLROOT . '/question');
             exit;
         }
 
@@ -139,5 +140,29 @@ class QuestionController extends Controller{
         $this->view('question/show', $data);
     }
 
+    public function edit(int $questionId) {
+        //validate if user logged in
+        // redirect to login if not
+        if (!$this->authenticate->isLoggedIn()) {
+            header('Location: ' . URLROOT . '/users/login');
+            exit;
+        }
+        $question = $this->questionmodel->getQuestionById($questionId);
+        // validate if user owns the question
+        if ($question['user_id'] != $_SESSION['user_id']) {
+            $this->view('403');
+            exit;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $errors = [];
+            $data = [
+                'id' => $questionId,
+                'title' => trim($_POST['title']),
+                'body' => trim($_POST['body']),
+                'image_path' => '',
+            ];
 
+        }
+    }
 }

@@ -27,9 +27,19 @@ var_dump($array_data);
     </p>
 
 
-    <div class="mt-3">
+    <div class="mt-3 ">
       <span class="font-bold"><?= $array_data['question']['title'] ?></span>
       <p class="mt-1"><?= $array_data['question']['body'] ?></p>
+      <?php if ($array_data['question']['image_path']) { ?>
+    <div class="mt-3">
+      <img src="<?= URLROOT . '/uploads/' . $array_data['question']['image_path'] ?>" alt="Question Image" class="w-full h-auto object-cover object-center">
+    </div>
+  <?php } ?>
+  <div class="bg-orange-300 hover:bg-orange-700 rounded-md py-2 px-4 mx-auto ">
+  <a href="<?= URLROOT . '/questions/edit/' . $array_data['question']['question_id'] ?>" class="bg-orange-500 hover:bg-orange-700 text-gray-700 font-bold py-2 px-4 rounded">
+  Edit Question
+</a>
+</div>
     </div>
     <div class="flex items-center justify-between mt-4 text-sm text-gray-600 fill-current">
       <div class="flex items-center">
@@ -44,6 +54,31 @@ var_dump($array_data);
         </button>
       </div>
     </div>
+
+    <div class="mt-3">
+  <h2 class="text-lg font-bold mb-2">Answers</h2>
+  <?php foreach ($array_data['answer'] as $answer) { ?>
+    <div class="bg-white rounded shadow-md p-4 mb-4">
+      <p class="text-gray-600"><?= $answer['body'] ?></p>
+      <div class="flex items-center justify-between mt-2">
+        <span class="text-gray-600">Answered by <?= $answer['username'] ?></span>
+        <div class="flex items-center">
+          <button class="flex items-center mr-2">
+            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 0h1v3l3 7v8a2 2 0 0 1-2 2H5c-1.1 0-2.31-.84-2.7-1.88L0 12v-2a2 2 0 0 1 2-2h7V2a2 2 0 0 1 2-2zm6 10h3v10h-3V10z"/></svg>
+            <span class="ml-2"><?= $answer['upvotes'] ?></span>
+          </button>
+          <button class="flex items-center">
+            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 20a2 2 0 0 1-2-2v-6H2a2 2 0 0 1-2-2V8l2.3-6.12A3.11 3.11 0 0 1 5 0h8a2 2 0 0 1 2 2v8l-3 7v3h-1zm6-10V0h3v10h-3z"/></svg>
+            <span class="ml-2"><?= $answer['downvotes'] ?></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <?php } ?>
+  </div>
+
+    </div>
+
   </div>
 </div>
 ?>

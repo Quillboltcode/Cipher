@@ -5,7 +5,7 @@ require_once 'app/views/partials/nav.php';
 
 <h1 class="text-4xl font-bold mb-6 text-center"><?php echo $data['title']; ?></h1>
 <?php
-var_dump($_SESSION);
+// var_dump($_SESSION);
 $array_data = json_decode(json_encode($data), true);
 // var_dump($array_data['questions']);
 foreach ($array_data['questions'] as $question) {
@@ -24,7 +24,7 @@ foreach ($array_data['questions'] as $question) {
                             ' . $question['body'] . '
                         </p>
                         <div class="flex items-center mb-4">';
-                            $tag = explode(',', $question['module_names']);
+                            $tag = isset($question['module_names']) ? explode(',', $question['module_names']) : [];
                             foreach ($tag as $value) {
                                 echo '<span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">' . $value . '</span>';
                             }

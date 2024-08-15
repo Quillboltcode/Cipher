@@ -1,7 +1,6 @@
 <?php
 use Core\Controller;
 
-
 class ContactController extends Controller
 {
 
@@ -27,7 +26,7 @@ class ContactController extends Controller
                 $body .= "Email: $email\n";
                 $body .= "Message: $message\n";
             }
-            mail('jVHr0@example.com', 'Contact Form', $body, $headers);
+            mail('minhhtgch230186@fpt.edu.vn', 'Contact Form', $body, $headers);
                 }
 
     }

@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         localhost
--- Server version:               8.0.37-0ubuntu0.22.04.3 - (Ubuntu)
+-- Server version:               8.0.39-0ubuntu0.22.04.1 - (Ubuntu)
 -- Server OS:                    Linux
 -- HeidiSQL Version:             12.8.0.6908
 -- --------------------------------------------------------
@@ -22,7 +22,7 @@ USE `cipher`;
 -- Dumping structure for table cipher.Answers
 CREATE TABLE IF NOT EXISTS `Answers` (
   `answer_id` int NOT NULL AUTO_INCREMENT,
-  `question_id` int NOT NULL,QuestionModules
+  `question_id` int NOT NULL,
   `user_id` int NOT NULL,
   `body` text NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -85,14 +85,15 @@ CREATE TABLE IF NOT EXISTS `Modules` (
   `module_name` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `description` text,
   PRIMARY KEY (`module_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table cipher.Modules: ~3 rows (approximately)
-INSERT INTO `Modules` (`module_id`, `module_name`, `created_at`, `updated_at`) VALUES
-	(1, 'Math', '2024-08-01 06:22:51', '2024-08-01 06:22:51'),
-	(2, 'Science', '2024-08-01 06:22:51', '2024-08-01 06:22:51'),
-	(3, 'History', '2024-08-01 06:22:51', '2024-08-01 06:22:51');
+INSERT INTO `Modules` (`module_id`, `module_name`, `created_at`, `updated_at`, `description`) VALUES
+	(1, 'Math', '2024-08-01 06:22:51', '2024-08-01 06:22:51', NULL),
+	(2, 'Science', '2024-08-01 06:22:51', '2024-08-01 06:22:51', NULL),
+	(3, 'History', '2024-08-01 06:22:51', '2024-08-01 06:22:51', NULL);
 
 -- Dumping structure for table cipher.QuestionModules
 CREATE TABLE IF NOT EXISTS `QuestionModules` (
@@ -127,13 +128,15 @@ CREATE TABLE IF NOT EXISTS `Questions` (
   PRIMARY KEY (`question_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `Questions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table cipher.Questions: ~3 rows (approximately)
+-- Dumping data for table cipher.Questions: ~5 rows (approximately)
 INSERT INTO `Questions` (`question_id`, `user_id`, `title`, `body`, `image_path`, `created_at`, `updated_at`) VALUES
 	(1, 1, 'What is the capital of France?', 'The capital of France is Paris.', NULL, '2024-08-01 06:22:51', '2024-08-01 06:22:51'),
 	(2, 2, 'What is the meaning of life?', 'The meaning of life is to find happiness and fulfillment.', NULL, '2024-08-01 06:22:51', '2024-08-01 06:22:51'),
-	(3, 3, 'What is the best programming language?', 'The best programming language is a matter of personal preference.', NULL, '2024-08-01 06:22:51', '2024-08-01 06:22:51');
+	(3, 3, 'What is the best programming language?', 'The best programming language is a matter of personal preference.', NULL, '2024-08-01 06:22:51', '2024-08-01 06:22:51'),
+	(4, 13, 'What is this?', 'Can anyone tell me what is this', 'conda.PNG', '2024-08-15 07:27:37', '2024-08-15 08:01:44'),
+	(6, 13, 'Test', 'Test', '', '2024-08-15 08:34:40', '2024-08-15 08:34:40');
 
 -- Dumping structure for table cipher.Roles
 CREATE TABLE IF NOT EXISTS `Roles` (
@@ -141,9 +144,12 @@ CREATE TABLE IF NOT EXISTS `Roles` (
   `role` enum('admin','user') NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table cipher.Roles: ~0 rows (approximately)
+-- Dumping data for table cipher.Roles: ~2 rows (approximately)
+INSERT INTO `Roles` (`role_id`, `role`, `created_at`) VALUES
+	(1, 'admin', '2024-08-15 08:54:51'),
+	(2, 'user', '2024-08-15 08:55:00');
 
 -- Dumping structure for table cipher.Users
 CREATE TABLE IF NOT EXISTS `Users` (
@@ -153,17 +159,22 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `password` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `role_id` int DEFAULT NULL,
+  `role_id` int DEFAULT '2',
+  `image_path` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`),
   KEY `role_id` (`role_id`),
   CONSTRAINT `Users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `Roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table cipher.Users: ~3 rows (approximately)
-INSERT INTO `Users` (`user_id`, `username`, `email`, `password`, `created_at`, `updated_at`, `role_id`) VALUES
-	(1, 'john_doe', 'john_doe@example.com', 'password123', '2024-08-01 06:22:51', '2024-08-01 06:22:51', NULL),
-	(2, 'jane_smith', 'jane_smith@example.com', 'password456', '2024-08-01 06:22:51', '2024-08-01 06:22:51', NULL),
-	(3, 'bob_jones', 'bob_jones@example.com', 'password789', '2024-08-01 06:22:51', '2024-08-01 06:22:51', NULL);
+-- Dumping data for table cipher.Users: ~5 rows (approximately)
+INSERT INTO `Users` (`user_id`, `username`, `email`, `password`, `created_at`, `updated_at`, `role_id`, `image_path`) VALUES
+	(1, 'john_doe', 'john_doe@example.com', 'password123', '2024-08-01 06:22:51', '2024-08-15 08:55:35', 2, NULL),
+	(2, 'jane_smith', 'jane_smith@example.com', 'password456', '2024-08-01 06:22:51', '2024-08-15 08:55:38', 2, NULL),
+	(3, 'bob_jones', 'bob_jones@example.com', 'password789', '2024-08-01 06:22:51', '2024-08-15 08:55:40', 2, NULL),
+	(13, 'admin', 'admin@gmail.com', '$2y$10$Yi9KHcD4n8cFeClt9pYkB.ec5hu7MAsoXCM8SC4Gckpk7PttAwVV.', '2024-08-14 02:18:08', '2024-08-15 08:55:41', 2, NULL),
+	(15, 'hello', 'hello@gmail.com', '$2y$10$3Xjf10isHvExWifCNgUIyuPHDmFfLRTUlccs9cYnup2ApY9Az0GOq', '2024-08-15 03:07:16', '2024-08-15 08:55:48', 2, NULL);
 
 -- Dumping structure for table cipher.Votes
 CREATE TABLE IF NOT EXISTS `Votes` (
@@ -182,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `Votes` (
   CONSTRAINT `Votes_ibfk_3` FOREIGN KEY (`question_id`) REFERENCES `Questions` (`question_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table cipher.Votes: ~9 rows (approximately)
+-- Dumping data for table cipher.Votes: ~15 rows (approximately)
 INSERT INTO `Votes` (`vote_id`, `answer_id`, `user_id`, `vote_type`, `created_at`, `question_id`) VALUES
 	(1, 1, 1, 'upvote', '2024-08-01 06:22:51', NULL),
 	(2, 2, 1, 'downvote', '2024-08-01 06:22:51', NULL),

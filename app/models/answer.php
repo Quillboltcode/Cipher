@@ -7,7 +7,7 @@ class Answer extends Model {
     public function __construct() {
         parent::__construct();
     }
-
+    // todo remove comment_count
     public function getAnswerByQuestionID($questionID) {
         $query = '
             SELECT 
@@ -19,29 +19,21 @@ class Answer extends Model {
                 Answers.updated_at, 
                 Users.username, 
                 (
-                    SELECT 
-                        COUNT(*) 
-                    FROM 
-                        Comments 
-                    WHERE 
-                        Comments.answer_id = Answers.answer_id
-                ) AS comment_count, 
-                (
-                    SELECT 
-                        COUNT(*) 
-                    FROM 
-                        Votes 
-                    WHERE 
-                        Votes.answer_id = Answers.answer_id
-                ) AS vote_count 
+                SELECT COUNT(*) FROM Votes WHERE Votes.answer_id = Answers.answer_id AND Votes.vote_type = "upvote") 
+                AS upvotes,
+            (
+                SELECT COUNT(*) FROM Votes WHERE Votes.answer_id = Answers.answer_id AND Votes.vote_type = "downvote") 
+                AS downvotes
             FROM 
                 Answers 
             JOIN 
                 Users ON Answers.user_id = Users.user_id 
             WHERE 
-                Answers.question_id = :questionID
-        ';
+                Answers.question_id = :questionID';
         $params = [':questionID' => $questionID];
+
+        
+
         return $this->getAll($query, $params);
     }
 
@@ -69,5 +61,4 @@ class Answer extends Model {
         return $this->getSingle($query, $params);
     }
 
-    
 }
