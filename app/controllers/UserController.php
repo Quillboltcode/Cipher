@@ -88,7 +88,7 @@ class UserController extends Controller {
         $user = $this->usermodel->getUserById($_SESSION['user_id']);
         $this->view('user/profile', $user);
     }
-    public function edit() {
+    public function edit(int $userId) {
         if (!$this->auth->isLoggedIn()) {
             header('Location: ' . URLROOT . '/users/login');
             exit;

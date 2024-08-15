@@ -36,7 +36,7 @@ var_dump($array_data);
     </div>
   <?php } ?>
   <div class="bg-orange-300 hover:bg-orange-700 rounded-md py-2 px-4 mx-auto ">
-  <a href="<?= URLROOT . '/questions/edit/' . $array_data['question']['question_id'] ?>" class="bg-orange-500 hover:bg-orange-700 text-gray-700 font-bold py-2 px-4 rounded">
+  <a href="<?= URLROOT . '/question/edit/' . $array_data['question']['question_id'] ?>" class="bg-orange-500 hover:bg-orange-700 text-gray-700 font-bold py-2 px-4 rounded">
   Edit Question
 </a>
 </div>

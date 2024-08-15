@@ -148,10 +148,20 @@ class QuestionController extends Controller{
             exit;
         }
         $question = $this->questionmodel->getQuestionById($questionId);
+        $question_array = json_decode(json_encode($question), true);
         // validate if user owns the question
-        if ($question['user_id'] != $_SESSION['user_id']) {
+        if ($question_array['user_id'] != $_SESSION['user_id']) {
             $this->view('403');
             exit;
+        }
+        // Display edit form
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $data = [
+                'id' => $questionId,
+                'title' => $question_array['title'],
+                'body' => $question_array['body'],
+            ];
+            $this->view('question/edit', $data);
         }
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
