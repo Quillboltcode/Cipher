@@ -1,4 +1,5 @@
-
+<?php require_once 'views/partials/head.php'; ?>
+<?php require_once 'views/partials/nav.php'; ?>
 <body class="bg-gray-100">
 
 <section class="flex items-center h-full p-16 dark:bg-gray-50 dark:text-gray-800">
@@ -14,4 +15,4 @@
 	</div>
 </section>
 
-
+<?php require_once 'views/partials/footer.php'; ?>

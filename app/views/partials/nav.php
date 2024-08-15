@@ -1,7 +1,7 @@
 <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
             <!-- Logo -->
-            <a href="<?php echo $baseDir.'/'; ?>" class="text-2xl font-bold text-gray-800">CIPHER</a>
+            <a href="<?php echo URLROOT.'/'; ?>" class="text-2xl font-bold text-gray-800">CIPHER</a>
             
             <!-- Search Bar -->
             <div class="relative w-full max-w-md mx-4">
@@ -13,12 +13,17 @@
 
             <!-- Right Side Menu -->
             <div class="flex items-center space-x-4">
-                <a href="<?php echo $baseDir.'/about'; ?>" class="text-gray-600 hover:text-gray-800">About Us</a>
-                <a href="<?php echo $baseDir.'/contact';?>" class="text-gray-600 hover:text-gray-800">Contact Us</a>
-                <a href="#" class="text-gray-600 hover:text-gray-800">Question</a>
-                <a href="views/about.html.php" class="text-gray-600 hover:text-gray-800">Answer</a>
-                <a href="" class="text-gray-600 hover:text-gray-800">Log in</a>
-                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Sign up</a>
+                <a href="<?php echo URLROOT.'/about'; ?>" class="text-gray-600 hover:text-gray-800">About Us</a>
+                <a href="<?php echo URLROOT.'/contact';?>" class="text-gray-600 hover:text-gray-800">Contact Us</a>
+                <a href="<?php echo URLROOT.'/question'; ?>" class="text-gray-600 hover:text-gray-800">Question</a>
+                <a href="<?php echo URLROOT.'/question/create'; ?>" class="text-gray-600 hover:text-gray-800">Ask a question</a>
+                <?php if(isset($_SESSION['email'])): ?>
+                    <a href="<?php echo URLROOT.'/user/profile'; ?>" class="text-gray-600 hover:text-gray-800">Profile</a>
+                    <a href="<?php echo URLROOT.'/user/logout'; ?>" class="text-gray-600 hover:text-gray-800">Logout</a>
+                <?php else: ?>
+                <a href="<?php echo URLROOT.'/user/login'; ?>" class="text-gray-600 hover:text-gray-800">Log in</a>
+                <a href="<?php echo URLROOT.'/user/register'; ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Sign up</a>
+                <?php endif; ?>
             </div>
         </div>
     </nav>

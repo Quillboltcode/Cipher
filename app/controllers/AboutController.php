@@ -1,7 +1,12 @@
 <?php
+use Core\Controller;
 
-$title = 'About Us';
+class AboutController extends Controller
+{
+    public function index()
+    {
+        $this->view('about/index');
+    }
+}
 
-require('views/about.html.php');
 
-?>

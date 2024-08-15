@@ -1,7 +1,12 @@
 <?php
-
+namespace Core;
 class Validator
 {
+    public $errors = [];
+
+    public function __construct() {
+        
+    }
     /**
      * Validates if a string is within a specified length range.
      *
@@ -27,6 +32,50 @@ class Validator
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
-}   
 
-?>
+   
+
+    public function validate($data, $rules)
+    {
+        foreach ($rules as $field => $ruleSet) {
+            $rulesArray = explode('|', $ruleSet);
+            foreach ($rulesArray as $rule) {
+                $value = isset($data[$field]) ? $data[$field] : null;
+
+                switch ($rule) {
+                    case 'required':
+                        if (empty($value)) {
+                            $this->errors[$field][] = 'This field is required';
+                        }
+                        break;
+                    case 'email':
+                        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                            $this->errors[$field][] = 'This field must be a valid email address';
+                        }
+                        break;
+                    case 'password_match':
+                        if ($data['password'] !== $data['confirm_password']) {
+                            $this->errors[$field][] = 'Passwords do not match';
+                        }
+                        break;
+                    // Rule username exists
+                    
+                }
+            }
+        }
+
+        return $this->errors;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    public function hasErrors()
+    {
+        return !empty($this->errors);
+    }
+}
+
+

@@ -2,51 +2,81 @@
 
 use Core\Controller;
 use Core\Authenticator;
-class UsersController extends Controller {
+use Core\Validator;
+require_once 'Core/Validator.php';
+class UserController extends Controller {
     private $auth;
-
+    private $validate;
     public function __construct() {
         $this->auth = new Authenticator();
+        $this->validate = new Validator();
     }
 
-    public function register() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            $confirmPassword = $_POST['confirm_password'];
+    public function register()
+    {
 
-            if ($password == $confirmPassword) {
-                if ($this->auth->register($username, $email, $password)) {
-                    header('Location: ' . URLROOT . '/users/login');
-                } else {
-                    die('Something went wrong');
-                }
-            } else {
-                die('Passwords do not match');
-            }
-        } else {
-            $this->view('users/register');
+        $data = [
+            'username' => $_POST['username'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'password' => $_POST['password'] ?? '',
+            'confirm_password' => $_POST['confirm_password'] ?? '',
+        ];
+
+        $rules = [
+            'username' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'confirm_password' => 'required|password_match',
+        ];
+
+        $this->validate->validate($data, $rules);
+
+        if ($this->validate->hasErrors()) {
+            $this->view('user/register', ['errors' => $this->validate->getErrors()]);
+            return;
         }
-    }
 
+        if (!$this->auth->register($data['username'], $data['email'], $data['password'])) {
+            die('Something went wrong');
+        }
+
+        header('Location: ' . URLROOT . '/user/login');
+    }
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+        $data = [
+            'email' => $_POST['email'] ?? '',
+            'password' => $_POST['password'] ?? '',
+        ];
 
-            if ($this->auth->login($email, $password)) {
-                header('Location: ' . URLROOT . '/questions/index');
-            } else {
-                die('Invalid login credentials');
-            }
-        } else {
-            $this->view('users/login');
+        $rules = [
+            'email' => 'required|email',
+            'password' => 'required',
+        ];
+
+
+        $this->validate->validate($data, $rules);
+
+        if ($this->validate->hasErrors()) {
+            $this->view('user/login', ['errors' => $this->validate->getErrors()]);
+            // error_log(print_r($this->validate->getErrors(), true));
+            return;
         }
+
+        if (!$this->auth->login($data['email'], $data['password'])) {
+            die('Invalid login credentials');
+        }
+        // login
+        $this->auth->login($data['email'], $data['password']);
+        header('Location: ' . URLROOT . '/question/index');
     }
 
     public function logout() {
         $this->auth->logout();
-        header('Location: ' . URLROOT . '/users/login');
+        header('Location: ' . URLROOT . '/user/login');
+    }
+
+    public function profile() {
+        $this->view('user/profile');
     }
 }
+

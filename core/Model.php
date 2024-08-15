@@ -1,6 +1,10 @@
 <?php
 namespace Core;
+use DateTime;
+use PDOException;
 use Core\Database;
+
+
 class Model {
     protected $db;
 
@@ -14,13 +18,29 @@ class Model {
      * @param string $query The query to execute
      * @param array<string, mixed> $params An associative array of parameters for the query
      * @return array<object>|null The array of results of the query, or null if no results were found
+     * @throws PDOException If the database query fails
      */
     public function getAll(string $query, array $params = []): ?array {
-        $this->db->query($query);
-        foreach ($params as $param => $value) {
-            $this->db->bind($param, $value);
+        // Check if the database connection is set before executing the query
+        if ($this->db === null) {
+            throw new PDOException('Database connection not initialized');
         }
-        return $this->db->resultSet();
+
+        try {
+            // Execute the query
+            $this->db->query($query);
+
+            // Bind the parameters to the query
+            foreach ($params as $param => $value) {
+                $this->db->bind($param, $value);
+            }
+
+            // Retrieve the result set
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            // Throw a more descriptive exception if the query fails
+            throw new PDOException('Database query failed: ' . $e->getMessage(), 0, $e);
+        }
     }
 
     /**
@@ -67,4 +87,6 @@ class Model {
         }
         return $this->db->rowCount();
     }
+
+
 }

@@ -1,6 +1,6 @@
 <?php
-
 namespace Core;
+use Exception;
 class Authenticator {
     private $db;
 
@@ -9,18 +9,34 @@ class Authenticator {
     }
 
     // Register a new user
+    // Handles unique email and username error here
     public function register($username, $email, $password) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         $query = 'INSERT INTO Users (username, email, password) VALUES (:username, :email, :password)';
+
         $this->db->query($query);
         $this->db->bind(':username', $username);
         $this->db->bind(':email', $email);
         $this->db->bind(':password', $hashedPassword);
-        
-        if ($this->db->execute()) {
-            return true;
-        } else {
-            return false;
+
+        try {
+            if ($this->db->execute()) {
+                return true;
+            } else {
+                throw new Exception("Database error: Failed to register user");
+            }
+        } catch (\PDOException $e) {
+            if ($e->getCode() == 23000) {
+                $errorCode = ord(substr($e->errorInfo[2], 0, 1));
+                if ($errorCode == 1062) {
+                    if (strpos($e->errorInfo[2], 'username')) {
+                        throw new Exception("Username already exists");
+                    } elseif (strpos($e->errorInfo[2], 'email')) {
+                        throw new Exception("Email already exists");
+                    }
+                }
+            }
+            throw new Exception("Database error: Failed to register user");
         }
     }
 
@@ -45,16 +61,24 @@ class Authenticator {
     }
 
     // Create user session
+    // Todo : create user session even when user is not logged in
+    // Todo : create user session when user is logged in
+
     public function createUserSession($user) {
-        session_start();
-        $_SESSION['user_id'] = $user->user_id;
-        $_SESSION['username'] = $user->username;
-        $_SESSION['email'] = $user->email;
+        if ($user) {
+            session_start();
+            $_SESSION['user_id'] = $user->user_id ?? null;
+            $_SESSION['username'] = $user->username ?? null;
+            $_SESSION['email'] = $user->email ?? null;
+            $_SESSION['logged_in'] = true;
+        } else {
+            throw new Exception('User object is null');
+        }
     }
 
     // Logout user
     public function logout() {
-        session_start();
+        
         unset($_SESSION['user_id']);
         unset($_SESSION['username']);
         unset($_SESSION['email']);
@@ -63,8 +87,7 @@ class Authenticator {
 
     // Check if user is logged in
     public function isLoggedIn() {
-        session_start();
-        if (isset($_SESSION['user_id'])) {
+        if (isset($_SESSION['user_id']) && $_SESSION['logged_in'] === true) {
             return true;
         } else {
             return false;

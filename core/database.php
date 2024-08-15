@@ -8,13 +8,13 @@ class Database {
     private $user = DB_USER;
     private $pass = DB_PASS;
     private $dbname = DB_NAME;
-
+    private $dbport = DB_PORT;
     private $dbh;
     private $stmt;
     private $error;
 
     public function __construct() {
-        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname. ';charset=utf8';
+        $dsn = 'mysql:host=' . $this->host .';port=' . $this->dbport .';dbname=' . $this->dbname. ';charset=utf8';
         $options = array(
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -30,6 +30,9 @@ class Database {
 
     public function query($sql) {
         $this->stmt = $this->dbh->prepare($sql);
+        if ($this->stmt === false) {
+            throw new \Exception('Failed to prepare the query.');
+        }
     }
 
     /**
@@ -81,5 +84,9 @@ class Database {
      */
     public function rowCount() {
         return $this->stmt->rowCount();
+    }
+
+    public function lastInsertId() {
+        return $this->dbh->lastInsertId();
     }
 }

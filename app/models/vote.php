@@ -1,45 +1,18 @@
 <?php
-require_once 'database.php';
+namespace Models;
+use Core\Model;
 
-class Vote {
-    private $conn;
-    private $table_name = "Vote";
-
-    public $VoteID;
-    public $UserID;
-    public $QuestionID;
-    public $AnswerID;
-    public $VoteType;
-
+class Vote extends Model
+{
     public function __construct() {
-        $database = new Database();
-        $this->conn = 
+        parent::__construct();
     }
 
-    public function create() {
-        $query = "INSERT INTO " . $this->table_name . " (UserID, QuestionID, AnswerID, VoteType) VALUES (:UserID, :QuestionID, :AnswerID, :VoteType)";
-        
-        $stmt = $this->conn->prepare($query);
-
-        $stmt->bindParam(':UserID', $this->UserID);
-        $stmt->bindParam(':QuestionID', $this->QuestionID);
-        $stmt->bindParam(':AnswerID', $this->AnswerID);
-        $stmt->bindParam(':VoteType', $this->VoteType);
-
-        if($stmt->execute()) {
-            return true;
-        }
-
-        return false;
+    public function getVoteCount(int $questionId) {
+        $query = 'SELECT COUNT(*) AS vote_count FROM Votes WHERE question_id = :questionId';
+        $params = [':questionId' => $questionId];
+        return $this->getSingle($query, $params);
     }
 
-    public function read() {
-        $query = "SELECT * FROM " . $this->table_name;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt;
-    }
     
-    // Implement update and delete methods as needed
 }
-?>
