@@ -35,6 +35,13 @@ class Validator
 
    
 
+    /**
+     * Validates data against a set of predefined rules.
+     *
+     * @param array $data The data to be validated.
+     * @param array $rules An array of rules where the key is the field name and the value is a pipe-separated list of rules.
+     * @return array An array of errors where the key is the field name and the value is a list of error messages.
+     */
     public function validate($data, $rules)
     {
         foreach ($rules as $field => $ruleSet) {

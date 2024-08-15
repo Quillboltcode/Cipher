@@ -32,8 +32,6 @@ class QuestionController extends Controller{
         ];
         $this->view('question/index', $data);
     }
-<<<<<<<<<<<<<<  ✨ Codeium Command 🌟 >>>>>>>>>>>>>>>>
-    //todo handle fileupload to folder image/ and rename it to CurrentTime+user_id
     public function create() {
         if (!$this->authenticate->isLoggedIn()) {
             header('Location: ' . URLROOT . '/users/login');
@@ -41,54 +39,80 @@ class QuestionController extends Controller{
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $image_path = '';
-            if(!empty($_FILES['image_path']['name'])) {
+            // Validate and sanitize form data
+            $errors = [];
+            $data = [
+                'title' => trim($_POST['title']),
+                'body' => trim($_POST['body']),
+                'user_id' => $_SESSION['user_id'],
+                'image_path' => '',
+            ];
+
+            if (empty($data['title'])) {
+                $errors['title'] = 'Title is required';
+            }
+            if (empty($data['body'])) {
+                $errors['body'] = 'Body is required';
+            }
+
+            if (!empty($_FILES['image_path']['name'])) {
+                // Limit image upload to 1 file
+                if (count($_FILES['image_path']['name']) > 1) {
+                    $errors['image_path'] = 'You can only upload 1 image';
+                }
+
+                // Validate image file
                 $target_dir = 'public/images/';
-                $target_file = $target_dir . time() . $_SESSION['user_id'] . '_' . basename($_FILES['image_path']['name']);
+                $target_file = $target_dir . time() . $_SESSION['user_id'] . '_' . basename($_FILES['image_path']['name'][0]);
                 $uploadOk = 1;
                 $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-                $check = getimagesize($_FILES['image_path']['tmp_name']);
+                $check = getimagesize($_FILES['image_path']['tmp_name'][0]);
                 if($check !== false) {
                     $uploadOk = 1;
                 } else {
+                    $errors['image_path'] = 'Not an image file';
                     $uploadOk = 0;
                 }
                 if (file_exists($target_file)) {
+                    $errors['image_path'] = 'Image already exists';
                     $uploadOk = 0;
                 }
-                if ($_FILES['image_path']['size'] > 500000) {
+                if ($_FILES['image_path']['size'][0] > 500000) {
+                    $errors['image_path'] = 'Image size exceeds 500KB';
                     $uploadOk = 0;
                 }
-                if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+                if(!in_array($imageFileType, ['jpg', 'png', 'jpeg', 'gif'])) {
+                    $errors['image_path'] = 'Invalid image format';
                     $uploadOk = 0;
                 }
-                if ($uploadOk == 0) {
-                    echo "Sorry, your file was not uploaded.";
-                } else {
-                    if (move_uploaded_file($_FILES['image_path']['tmp_name'], $target_file)) {
-                        $image_path = $target_file;
+
+                // Upload image file
+                if (empty($errors['image_path'])) {
+                    if (move_uploaded_file($_FILES['image_path']['tmp_name'][0], $target_file)) {
+                        $data['image_path'] = $target_file;
                     } else {
-                        echo "Sorry, there was an error uploading your file.";
+                        $errors['image_path'] = 'Error uploading image';
                     }
                 }
             }
-            $question = [
-                'title' => $_POST['title'],
-                'body' => $_POST['body'],
-                'user_id' => $_SESSION['user_id'],
-                'image_path' => $image_path,
-                'image_path' => $_POST['image_path'],
-            ];
-            $this->questionmodel->createQuestion($question);
+
+            // Redirect back if there are errors
+            if (!empty($errors)) {
+                $this->view('question/create', [
+                    'errors' => $errors,
+                    'data' => $data,
+                ]);
+                return;
+            }
+
+            // Create question
+            $this->questionmodel->createQuestion($data);
             header('Location: ' . URLROOT . '/questions');
             exit;
         }
-        $this->view('question/create', [
-            
-        ]);
 
+        $this->view('question/create');
     }
-<<<<<<<  4a7922e5-001a-4070-84ef-8db508eeae1f  >>>>>>>
 
     public function show(int $questionId) {
 

@@ -19,7 +19,7 @@ require_once './app/views/partials/nav.php';
       <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="module_names" type="text" name="module_names">
     </div>
     <div class="mb-4">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="image_path">Image Path</label>
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="image_path">Image</label>
       <input type="file" id="image_path" name="image_path">
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Create Question</button>
   </form>

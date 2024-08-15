@@ -6,3 +6,5 @@ npm-debug.log
 yarn-error.log
 tailwindcss
 start.bash
+stop.bash
+vendor/
