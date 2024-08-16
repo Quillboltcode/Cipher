@@ -1,6 +1,9 @@
 <?php require_once 'app/views/partials/head.php'; ?>
 <?php require_once 'app/views/partials/nav.php'; ?>
-
+<?php 
+var_dump(getenv('POSH_PID'));
+var_dump($_ENV['POSH_PID']);
+?>
 <form class="max-w-md mx-auto bg-white p-8 mt-8 shadow-md">
   <h2 class="text-lg font-bold mb-4">Get in Touch</h2>
   <div class="mb-4">

@@ -10,3 +10,4 @@ stop.bash
 vendor/
 uploads/
 tree.txt
+config.php

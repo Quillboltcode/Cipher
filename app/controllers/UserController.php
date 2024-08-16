@@ -85,10 +85,16 @@ class UserController extends Controller {
             exit;
         }
         // Get user profile from database
-        $user = $this->usermodel->getUserById($_SESSION['user_id']);
+        $user= [
+            'user' => $this->usermodel->getUserById($_SESSION['user_id']),
+            'question_count'=> $this->usermodel->getUserQuestionCount($_SESSION['user_id']),
+            'answer_count' => $this->usermodel->getUserAnswerCount($_SESSION['user_id']),
+        ];
+        // send data to view as json
+
         $this->view('user/profile', $user);
     }
-    public function edit(int $userId) {
+    public function edit() {
         if (!$this->auth->isLoggedIn()) {
             header('Location: ' . URLROOT . '/users/login');
             exit;
@@ -99,6 +105,7 @@ class UserController extends Controller {
             $user = $this->usermodel->getUserById($_SESSION['user_id']);
             // Validate and sanitize form data
             $errors = [];
+            // prevent xss and sql injection here
             $data = [
                 'username' => trim($_POST['username'] ?? $user->username),
                 'email' => trim($_POST['email'] ?? $user->email),
@@ -108,11 +115,10 @@ class UserController extends Controller {
             $rules = [
                 'username' => 'required',
                 'email' => 'required|email',
-                'password' => 'required',
             ];
 
             $this->validate->validate($data, $rules);
-
+            // error_log(print_r($data, true));
             if ($this->validate->hasErrors()) {
                 $errors = $this->validate->getErrors();
             } else {
@@ -133,14 +139,22 @@ class UserController extends Controller {
                     $avatar_ext = strtolower(end($avatar_ext));
 
                     if (in_array($avatar_ext, $extensions)) {
+                        // limit image size to 2mb and limit to jpeg, png, gif and only 1 file
                         if ($avatar_error === 0 && $avatar_size <= 2000000) {
                             $avatar_name = uniqid('avatar_') . '.' . $avatar_ext;
-                            move_uploaded_file($avatar_tmp_name, URLROOT . '/uploads/' . $avatar_name);
+                            // move to uploads folder
+                            error_log('avatar name: ' . $avatar_tmp_name);
+                            move_uploaded_file($avatar_tmp_name, $_SERVER['DOCUMENT_ROOT'] . '/Cipher/app/public/uploads/' . $avatar_name);
                             $user->avatar = $avatar_name;
                         }
                     }
                 }
-                $this->usermodel->updateUser($user['user_id'], $user);
+                // Turn $user object into an array and rename attribute avatar to image_path
+                $userData = (array) $user;
+                
+                // TODO: Add validation to check if the new image path is valid
+
+                $this->usermodel->updateUser($_SESSION['user_id'], $userData);
                 header('Location: ' . URLROOT . '/user/profile');
             }
         }

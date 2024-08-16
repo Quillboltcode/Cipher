@@ -9,6 +9,5 @@ class CommentController extends Controller
 
     }
 
-    
 
 }

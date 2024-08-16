@@ -16,10 +16,12 @@ define('APPROOT', dirname(dirname(__FILE__)));
 // URL root
 define('URLROOT', 'http://localhost:8080/Cipher');
 define('PUBLIC_PATH', URLROOT . '/app/public');
+define('UPLOAD_PATH', URLROOT .'/app/public/uploads/');
 // Site name
-define('SITENAME', 'Student Q&A System');
+define('SITENAME', 'Cipher');
 
 // App version
 define('APPVERSION', '1.0.0');
 
-?>
+// Define SECRET_KEY
+define('PHP_MAILER',"zbfn miid wqmy xvwz");

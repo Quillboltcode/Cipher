@@ -17,7 +17,7 @@ class User extends Model
     }
     
     public function getUserbyId($id){
-        $this->db->query("SELECT user_id, username, email,created_at,updated_at,role_id  FROM Users WHERE user_id = $id");
+        $this->db->query("SELECT user_id, username, email,avatar,created_at,updated_at,role_id  FROM Users WHERE user_id = $id");
         return $this->db->single();
     }
 
@@ -33,6 +33,17 @@ class User extends Model
         return $this->db->single();
     }
 
+    public function getUserQuestionCount($id){
+        $this->db->query("SELECT COUNT(*) as count FROM Questions WHERE user_id = :id");
+        $this->db->bind(':id', $id);
+        return $this->db->single();
+    }
+
+    public function getUserAnswerCount($id){
+        $this->db->query("SELECT COUNT(*) as count FROM Answers WHERE user_id = :id");
+        $this->db->bind(':id', $id);
+        return $this->db->single(); 
+    }
  
     
     public function emailExists($email) {
@@ -41,12 +52,30 @@ class User extends Model
         return $this->db->rowCount();
     }
 
-    // Change username 
+    /**
+     * Update user information
+     * 
+     * @param int $id user id
+     * @param array $data user data to update
+     * 
+     * @return void
+     */
     public function UpdateUser($id, $data){
-        $this->db->query("UPDATE Users SET Username = :username, email = :email, ,updated_at = NOW() WHERE user_id = :id");
+        // SQL query to update user information
+        $this->db->query("UPDATE Users 
+        SET Username = :username, 
+            email = :email, 
+            avatar = :avatar, 
+            updated_at = NOW() 
+        WHERE user_id = :id");
+        
+        // Bind values
         $this->db->bind(':username', $data['username']);
         $this->db->bind(':email', $data['email']);
+        $this->db->bind(':avatar', $data['avatar'] ?? null);
         $this->db->bind(':id', $id);
+        
+        // Execute query
         $this->db->execute();
     }
 
