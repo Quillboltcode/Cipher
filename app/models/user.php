@@ -86,5 +86,10 @@ class User extends Model
         $this->db->bind(':id', $id);
         $this->db->execute();
     }
+
+    public function countUsers() : int {
+        $this->db->query("SELECT COUNT(*) as count FROM Users");
+        return $this->db->single()->count;
+    }
 }   
 

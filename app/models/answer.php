@@ -18,6 +18,7 @@ class Answer extends Model {
                 Answers.created_at, 
                 Answers.updated_at, 
                 Users.username, 
+                Users.avatar,
                 (
                 SELECT COUNT(*) FROM Votes WHERE Votes.answer_id = Answers.answer_id AND Votes.vote_type = "upvote") 
                 AS upvotes,
@@ -61,4 +62,8 @@ class Answer extends Model {
         return $this->getSingle($query, $params);
     }
 
+    public function countAnswers() {
+        $this->db->query("SELECT COUNT(*) as count FROM Answers");
+        return $this->db->single();
+    }
 }

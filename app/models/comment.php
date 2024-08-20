@@ -20,16 +20,31 @@ class Comment extends Model
         $query = 'SELECT * FROM Comments WHERE id = :id';
         return $this->getSingle($query, ['id' => $id]);
     }
-
-    public function createComment($userId, $questionId, $body)
+    // create comment for question or answer
+    // answer_id  and canbe null and question_id can be null but not both at the same time
+    // there cannot be both value of answer_id and question_id
+    public function createComment($userId, $questionId, $answer_id, $body)
     {
-        $query = 'INSERT INTO Comments (user_id, question_id, body) VALUES (:userId, :questionId, :body)';
+        if (!is_null($questionId) && !is_null($answer_id)) {
+            throw new \InvalidArgumentException('Cannot have both question_id and answer_id present in a comment');
+        }
+
+        if (is_null($questionId) && is_null($answer_id)) {
+            throw new \InvalidArgumentException('Question_id and answer_id cannot both be null');
+        }
+
+        $query = 'INSERT INTO Comments (user_id, question_id, answer_id, body) VALUES (:userId, :questionId, :answer_id, :body)';
         $params = [
             ':userId' => $userId,
             ':questionId' => $questionId,
+            ':answer_id' => $answer_id,
             ':body' => $body
         ];
-        $this->executeQuery($query, $params);
+        try {
+            $this->executeQuery($query, $params);
+        } catch (\PDOException $e) {
+            throw new \InvalidArgumentException('Failed to create comment: ' . $e->getMessage());
+        }
     }
 
     public function getCommentByQuestionId($questionId)

@@ -48,7 +48,10 @@ foreach ($array_data['questions'] as $question) {
             </div>';
     }
  ?>
+<?php
 
+// Todo: add pagination html
+?>
 
 
 

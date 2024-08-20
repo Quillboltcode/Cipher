@@ -8,6 +8,7 @@ class Controller {
         require_once 'app/views/' . $view . '.html.php';
     }
 
+    // This function should not be used in controllers
     public function render($file, $data = []) {
         $viewFile = 'app/views/' . $file . '.html.php';
         if (!file_exists($viewFile)) {
@@ -18,6 +19,8 @@ class Controller {
         require_once $viewFile;
         $content = ob_get_clean();
     }
+
+
 
         /**
      * Helper function to calculate the time difference between a given time and the current time

@@ -7,80 +7,119 @@ require_once 'app/views/partials/nav.php';
 <?php
 
 $array_data = json_decode(json_encode($data), true);
-var_dump($array_data);
+// var_dump($array_data);
+var_dump($array_data['question']);
 ?>
-<div class="flex items-start">
-  <div class="flex-shrink-0">
-    <div class="inline-block relative">
-      <div class="relative w-16 h-16 rounded-full overflow-hidden">
-        <img class="absolute top-0 left-0 w-full h-full bg-cover object-fit object-cover" src="https://picsum.photos/id/646/200/200" alt="Profile picture">
-        <div class="absolute top-0 left-0 w-full h-full rounded-full shadow-inner"></div>
+
+
+<div class="container mx-auto mt-10 p-6 bg-white rounded shadow">
+  <!-- Question Title -->
+  <h1 class="text-2xl font-semibold mb-4"><?=htmlspecialchars($array_data['question']['title'])?></h1>
+
+  <div class="flex space-x-6">
+    <!-- Vote Section -->
+    <div class="text-center">
+      <button id="question_upvote" class="text-gray-600 hover:text-green-600">▲</button>
+      <div class="text-green-600 font-bold"><?=htmlspecialchars($array_data['question']['upvotes'])?></div>
+      <button id="question_downvote" class="text-gray-600 hover:text-red-600">▼</button>
+      <div class="text-red-600"><?=htmlspecialchars($array_data['question']['downvotes'])?></div>
+    </div>
+
+    <!-- Question Content -->
+    <div class="flex-grow">
+      <p class="mb-4">
+        <?=htmlspecialchars($array_data['question']['body'])?>
+        <br>
+        <?=htmlspecialchars($array_data['question']['body'])?>
+      </p>
+
+      <!-- Modules -->
+      <div class="flex space-x-2 mb-4">
+        <?php if ($array_data['question']['module_names'] == '') : ?>
+          <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded">No modules</span>
+        <?php else: ?>
+        <?php $moduleNames = explode(',', $array_data['question']['module_names']); ?>
+        <?php foreach ($moduleNames as $moduleName) : ?>
+          <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded"><?=htmlspecialchars($moduleName)?></span>
+        <?php endforeach; ?>
+        <?php endif; ?>
       </div>
-      <svg class="fill-current text-white bg-green-600 rounded-full p-1 absolute bottom-0 right-0 w-6 h-6 -mx-1 -my-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-        <path d="M19 11a7.5 7.5 0 0 1-3.5 5.94L10 20l-5.5-3.06A7.5 7.5 0 0 1 1 11V3c3.38 0 6.5-1.12 9-3 2.5 1.89 5.62 3 9 3v8zm-9 1.08l2.92 2.04-1.03-3.41 2.84-2.15-3.56-.08L10 5.12 8.83 8.48l-3.56.08L8.1 10.7l-1.03 3.4L10 12.09z"/>
-      </svg>
-    </div>
-  </div>
-  <div class="ml-6">
-    <p class="flex items-baseline">
-      <span class="text-gray-600 font-bold"><?= $array_data['question']['username'] ?></span>
-    </p>
 
-
-    <div class="mt-3 ">
-      <span class="font-bold"><?= $array_data['question']['title'] ?></span>
-      <p class="mt-1"><?= $array_data['question']['body'] ?></p>
-      <?php if ($array_data['question']['image_path']) { ?>
-    <div class="mt-3">
-      <img src="<?= URLROOT . '/uploads/' . $array_data['question']['image_path'] ?>" alt="Question Image" class="w-full h-auto object-cover object-center">
-    </div>
-  <?php } ?>
-  <div class="bg-orange-300 hover:bg-orange-700 rounded-md py-2 px-4 mx-auto ">
-  <a href="<?= URLROOT . '/question/edit/' . $array_data['question']['question_id'] ?>" class="bg-orange-500 hover:bg-orange-700 text-gray-700 font-bold py-2 px-4 rounded">
-  Edit Question
-</a>
-</div>
-    </div>
-    <div class="flex items-center justify-between mt-4 text-sm text-gray-600 fill-current">
-      <div class="flex items-center">
-        <span>Was this review helplful?</span>
-        <button class="flex items-center ml-6">
-          <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 0h1v3l3 7v8a2 2 0 0 1-2 2H5c-1.1 0-2.31-.84-2.7-1.88L0 12v-2a2 2 0 0 1 2-2h7V2a2 2 0 0 1 2-2zm6 10h3v10h-3V10z"/></svg>
-          <span class="ml-2"><?= $array_data['question']['upvotes'] ?></span>
-        </button>
-        <button class="flex items-center ml-4">
-          <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 20a2 2 0 0 1-2-2v-6H2a2 2 0 0 1-2-2V8l2.3-6.12A3.11 3.11 0 0 1 5 0h8a2 2 0 0 1 2 2v8l-3 7v3h-1zm6-10V0h3v10h-3z"/></svg>
-          <span class="ml-2"><?= $array_data['question']['downvotes'] ?></span>
-        </button>
+      <!-- Actions -->
+      <div class="flex space-x-4 text-sm text-gray-600">
+        <a href="<?=URLROOT?>/question/edit/<?=htmlspecialchars($array_data['question']['question_id'])?>" class="hover:underline">edit</a>
+        <a href="<?=URLROOT?>/question/delete/<?=htmlspecialchars($array_data['question']['question_id'])?>" class="hover:underline">close</a>
+        <a href="<?=URLROOT?>/question/comment/question/<?=htmlspecialchars($array_data['question']['question_id'])?>" class="hover:underline">add comment</a>
       </div>
     </div>
 
-    <div class="mt-3">
-  <h2 class="text-lg font-bold mb-2">Answers</h2>
-  <?php foreach ($array_data['answer'] as $answer) { ?>
-    <div class="bg-white rounded shadow-md p-4 mb-4">
-      <p class="text-gray-600"><?= $answer['body'] ?></p>
-      <div class="flex items-center justify-between mt-2">
-        <span class="text-gray-600">Answered by <?= $answer['username'] ?></span>
-        <div class="flex items-center">
-          <button class="flex items-center mr-2">
-            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 0h1v3l3 7v8a2 2 0 0 1-2 2H5c-1.1 0-2.31-.84-2.7-1.88L0 12v-2a2 2 0 0 1 2-2h7V2a2 2 0 0 1 2-2zm6 10h3v10h-3V10z"/></svg>
-            <span class="ml-2"><?= $answer['upvotes'] ?></span>
-          </button>
-          <button class="flex items-center">
-            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 20a2 2 0 0 1-2-2v-6H2a2 2 0 0 1-2-2V8l2.3-6.12A3.11 3.11 0 0 1 5 0h8a2 2 0 0 1 2 2v8l-3 7v3h-1zm6-10V0h3v10h-3z"/></svg>
-            <span class="ml-2"><?= $answer['downvotes'] ?></span>
-          </button>
+    <!-- User Info -->
+    <div class="text-sm text-gray-600 bg-gray-50 p-4 rounded">
+      <div class="mb-2"><?=htmlspecialchars($array_data['question']['created_at'])?></div>
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-gray-300 rounded-full"></div> <!-- Placeholder for user avatar -->
+        <div>
+          <div class="font-semibold"><?=htmlspecialchars($array_data['question']['username'])?></div>
         </div>
       </div>
     </div>
-    <?php } ?>
   </div>
 
+  <!-- Comment Section -->
+  <div class="mt-6 border-t pt-4">
+    <div class="mb-2 text-sm text-gray-700">
+      1. You need to install a PHP expansion board in a spare ISA slot of your server. Then configure Apache with the
+      same IRQ as the DIP switches on the PHP board.
+      <span class="text-gray-500">– Jonathon Reinhart 5 mins ago</span>
     </div>
-
+    <a href="#" class="text-blue-600 text-sm hover:underline">add comment</a>
   </div>
 </div>
-?>
 
-<?php require_once 'app/views/partials/footer.php' ; ?>
+
+<div class="container mx-auto mt-10 p-6 bg-white rounded shadow">
+    <!-- Answer Title -->
+    <!-- <h1 class="text-2xl font-semibold mb-4"><?=htmlspecialchars($array_data['answer_title'])?></h1> -->
+
+    <?php foreach ($array_data['answer'] as $answer) : ?>
+        <div class="flex space-x-6">
+            <!-- Vote Section -->
+            <div class="text-center">
+                <button id="answer_upvote" class="text-gray-600 hover:text-green-600">▲</button>
+                <div class="text-green-600 font-bold"><?=htmlspecialchars($answer['upvotes'])?></div>
+                <button id="answer_downvote" class="text-gray-600 hover:text-red-600">▼</button>
+                <div class="text-red-600"><?=htmlspecialchars($answer['downvotes'])?></div>
+            </div>
+
+            <!-- Answer Content -->
+            <div class="flex-grow">
+                <p class="mb-4">
+                    <?=htmlspecialchars($answer['body'])?>
+                </p>
+
+                <!-- Actions -->
+                <div class="flex space-x-4 text-sm text-gray-600">
+                    <a href="<?=URLROOT?>/answer/edit/<?=htmlspecialchars($answer['answer_id'])?>" class="hover:underline">edit</a>
+                    <a href="<?=URLROOT?>/answer/delete/<?=htmlspecialchars($answer['answer_id'])?>" class="hover:underline">delete</a>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="flex-shrink-0">
+                <img src="<?php if (!empty($answer['image_path'])) {
+                    echo htmlspecialchars($answer['image_path']);
+                  }else {
+                      echo 'https://via.placeholder.com/24';
+                    }
+                ?>
+                
+                " alt="User Avatar" class="w-10 h-10 rounded-full">
+                <span class=""
+                <span class="text-sm text-gray-600"><?=htmlspecialchars($answer['username'])?></span>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
+<?php require_once 'app/views/partials/footer.php'; ?>

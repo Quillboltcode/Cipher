@@ -143,8 +143,8 @@ class UserController extends Controller {
                         if ($avatar_error === 0 && $avatar_size <= 2000000) {
                             $avatar_name = uniqid('avatar_') . '.' . $avatar_ext;
                             // move to uploads folder
-                            error_log('avatar name: ' . $avatar_tmp_name);
-                            move_uploaded_file($avatar_tmp_name, $_SERVER['DOCUMENT_ROOT'] . '/Cipher/app/public/uploads/' . $avatar_name);
+                            // error_log('avatar name: ' . $avatar_tmp_name);
+                            move_uploaded_file($avatar_tmp_name, UPLOAD_DOCUMENTS . $avatar_name);
                             $user->avatar = $avatar_name;
                         }
                     }
@@ -152,9 +152,12 @@ class UserController extends Controller {
                 // Turn $user object into an array and rename attribute avatar to image_path
                 $userData = (array) $user;
                 
-                // TODO: Add validation to check if the new image path is valid
-
+                    
                 $this->usermodel->updateUser($_SESSION['user_id'], $userData);
+                // reset session
+                $_SESSION['user_id'] = $user->id;
+                $_SESSION['username'] = $user->username;
+                $_SESSION['email'] = $user->email;
                 header('Location: ' . URLROOT . '/user/profile');
             }
         }

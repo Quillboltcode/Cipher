@@ -63,10 +63,11 @@ class Authenticator {
     // Create user session
     // Todo : create user session even when user is not logged in
     // Todo : create user session when user is logged in
+    // This can be used when user updates their profile
 
     public function createUserSession($user) {
         if ($user) {
-            session_start();
+            // session_start();
             $_SESSION['user_id'] = $user->user_id ?? null;
             $_SESSION['username'] = $user->username ?? null;
             $_SESSION['email'] = $user->email ?? null;
@@ -82,7 +83,7 @@ class Authenticator {
         unset($_SESSION['user_id']);
         unset($_SESSION['username']);
         unset($_SESSION['email']);
-        session_destroy();
+        // session_destroy();
     }
 
     // Check if user is logged in

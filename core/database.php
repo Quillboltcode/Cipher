@@ -1,5 +1,4 @@
 <?php
-
 namespace Core;
 use PDO;
 use PDOException;
@@ -27,11 +26,12 @@ class Database {
             echo $this->error;
         }
     }
-
+    // todo add error logging 
     public function query($sql) {
         $this->stmt = $this->dbh->prepare($sql);
         if ($this->stmt === false) {
-            throw new \Exception('Failed to prepare the query.');
+            $error = $this->dbh->errorInfo();
+            throw new \Exception(sprintf('Failed to prepare the query. Error: %s', $error[2]));
         }
     }
 
@@ -88,5 +88,9 @@ class Database {
 
     public function lastInsertId() {
         return $this->dbh->lastInsertId();
+    }
+
+    public function getError() {
+        return $this->error;
     }
 }
