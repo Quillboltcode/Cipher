@@ -6,4 +6,5 @@
     <title>Coders Corner</title>
     <!-- <link rel="stylesheet" href="<?= PUBLIC_PATH . '/css/output.css' ?>"> -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="<?= PUBLIC_PATH . '/js/vote.js' ?>"></defer></script>
 </head>

@@ -15,6 +15,11 @@ class Module extends Model
 
     }
 
+    public function getAllMoudules(){
+        $sql = "SELECT * FROM Modules";
+        return $this->getAll($sql);
+    }
+
     public function createModule(array $data){
         $sql = "INSERT INTO Modules (module_name,description) VALUES (:module_name, :description)";
         $this->db->bind(':module_name', $data['module_name']);

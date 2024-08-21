@@ -4,8 +4,8 @@ require_once 'app/views/partials/head.php';
 require_once 'app/views/partials/nav.php';
 ?>
 <?php $user = json_decode(json_encode($data), true); 
-var_dump($user);
-echo $_SERVER['DOCUMENT_ROOT'];
+// var_dump($user);
+// echo $_SERVER['DOCUMENT_ROOT'];
 ?>
 
 <form action="<?php echo URLROOT; ?>/user/edit" method="POST" class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-10 p-8" enctype="multipart/form-data">

@@ -33,7 +33,7 @@ class Vote extends Model
         // check if the user voted before
         // if the user has already voted, update the existing vote
         // if not, create a new vote
-        $query = "SELECT * FROM votes WHERE user_id = :user_id AND question_id = :question_id";
+        $query = "SELECT * FROM cipher.Votes WHERE user_id = :user_id AND question_id = :question_id";
         $this->db->query($query);
         $this->db->bind(':user_id', $user_id);
         $this->db->bind(':question_id', $question_id);
@@ -44,7 +44,7 @@ class Vote extends Model
             // if the vote_type is different, update the vote record
             $current_vote_type = $this->db->single()->vote_type;
             if ($current_vote_type !== $vote_type) {
-                $query = "UPDATE votes SET vote_type = :vote_type WHERE user_id = :user_id AND question_id = :question_id";
+                $query = "UPDATE Votes SET vote_type = :vote_type WHERE user_id = :user_id AND question_id = :question_id";
                 $this->db->query($query);
                 $this->db->bind(':user_id', $user_id);
                 $this->db->bind(':question_id', $question_id);
@@ -53,7 +53,7 @@ class Vote extends Model
             }
         } else {
             // create a new vote
-            $query = "INSERT INTO votes (user_id, question_id, vote_type, created_at) VALUES (:user_id, :question_id, :vote_type, NOW())";
+            $query = "INSERT INTO Votes (user_id, question_id, vote_type, created_at) VALUES (:user_id, :question_id, :vote_type, NOW())";
             $this->db->query($query);
             $this->db->bind(':user_id', $user_id);
             $this->db->bind(':question_id', $question_id);

@@ -4,7 +4,7 @@ require_once './app/views/partials/nav.php';
 ?>
 <?php 
 // var_dump($data);
-var_dump($data['module']);
+// var_dump($data['module']);
 
 
 ?>

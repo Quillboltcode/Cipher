@@ -45,7 +45,7 @@ class ContactController extends Controller
                 $mail->Port = 587; // TCP port to connect to
 
                 //Recipients
-                $mail->setFrom($_POST['email'], $_SESSION['username']);
+                $mail->setFrom($_POST['email'], $_SESSION['username']??$_POST['email']);
                 $mail->addAddress('minhhtgch230186@fpt.edu.vn'); // Add a recipient
 
                 // Content
@@ -56,7 +56,7 @@ class ContactController extends Controller
 
                 $mail->send();
                 // Save email to database with array of $_POST
-                $this->errors['database'] = $this->contactmodel->saveEmail(['user_id' => $_SESSION['user_id'],'email' => $_POST['email'], 'subject' => $_POST['subject'], 'message' => $_POST['message']]);
+                $this->errors['database'] = $this->contactmodel->saveEmail(['user_id' => $_SESSION['user_id']??0,'email' => $_POST['email'], 'subject' => $_POST['subject'], 'message' => $_POST['message']]);
                 $this->errors['success'] = 'Message has been sent';
             } catch (Exception $e) {
                 // redirect to error page

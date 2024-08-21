@@ -5,11 +5,15 @@ use Models\{Question,
 Answer,
 Comment,
 Module,
+Vote,
 };
+// use CommentController;
 require_once 'app/models/question.php';
 require_once 'app/models/answer.php';
 require_once 'app/models/comment.php';
 require_once 'app/models/module.php';
+require_once 'app/models/vote.php';
+require_once 'app/controllers/CommentController.php';
 class QuestionController extends Controller{
 
     private $questionmodel;
@@ -17,27 +21,37 @@ class QuestionController extends Controller{
     private $commentmodel;
     private $authenticate;
     private $modulesmodel;
+    private $votemodel;
+    private $CommentController;
     public function __construct() {
         $this->questionmodel = new Question();
         $this->answermodel = new Answer();
         $this->commentmodel = new Comment();
         $this->authenticate = new Authenticator();
         $this->modulesmodel = new Module();
+        $this->votemodel = new Vote();
+        $this->CommentController = new CommentController();
     }
 
-    public function index() {
-        $questions = $this->questionmodel->getAllQuestions();
-        // $timediff = $this->questionmodel->timeDiffForDisplay();
+    public function index($page = 1, $limit = 5) {
+        // $offset = ($page - 1) * $limit;
+        $questions = $this->questionmodel->getAllQuestions($page, $limit);
+        $questions_count = $this->questionmodel->countQuestions()->count;
         $data = [
             'title' => 'Questions Listing',
             'questions' => $questions ?? [],
+            'pagination'=>[
+                'page' => $page,
+                'limit' => $limit,
+                'total_page'=>ceil($questions_count / $limit),
+            ]
             // 'timediff' => $timediff,
         ];
         $this->view('question/index', $data);
     }
     public function create() {
         if (!$this->authenticate->isLoggedIn()) {
-            header('Location: ' . URLROOT . '/users/login');
+            header('Location: ' . URLROOT . '/user/login');
             exit;
         }
 
@@ -170,6 +184,20 @@ class QuestionController extends Controller{
         }
         $this->questionmodel->deleteQuestion($questionId);
         header('Location: ' . URLROOT . '/question');
+        exit;
+    }
+
+    public function vote(int $questionId) {
+        $this->votemodel->vote($_SESSION['user_id'], $questionId, $_POST['vote_type']);
+        header('Location: ' . URLROOT . '/question/show/' . $questionId);
+        exit;
+    }
+
+
+    public function comment(int $questionId) {
+        $this->CommentController->create($questionId);
+
+        header('Location: ' . URLROOT . '/question/show/' . $questionId);
         exit;
     }
 }

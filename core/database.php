@@ -26,7 +26,7 @@ class Database {
             echo $this->error;
         }
     }
-    // todo add error logging 
+    // add error logging later on
     public function query($sql) {
         $this->stmt = $this->dbh->prepare($sql);
         if ($this->stmt === false) {

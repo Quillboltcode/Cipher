@@ -37,11 +37,9 @@ class Router {
                 unset($url[0]);
             }
         }
-
         if (empty($this->controller)) {
             throw new \Exception('The controller file does not exist.');
         }
-
         require_once 'app/controllers/' . $this->controller . '.php';
 
         // Instantiate the controller class
@@ -56,7 +54,10 @@ class Router {
                 $this->method = $url[1];
                 unset($url[1]);
             } else {
-                throw new \Exception('The controller class does not have the specified method.');
+                // The method do not exist, redirect to 404 page, this currently go to homepage
+                throw new \Exception('The method does not exist.');
+
+                
             }
         } else if (method_exists($this->controller, 'index')) {
             $this->method = 'index';

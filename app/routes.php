@@ -7,5 +7,5 @@ return [
   '/comments' => 'controllers/CommentController.php',
   '/tags' => 'controllers/TagController.php',
   '/search' => 'controllers/SearchController.php',  
+  '/vote' => 'controllers/VoteController.php',
 ];
-?>

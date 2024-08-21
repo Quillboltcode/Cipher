@@ -6,7 +6,7 @@ require_once('./app/views/partials/nav.php');
 ?>
 <?php
 $home = json_decode($data,true);
-var_dump($home);
+// var_dump($home);
 ?>
 
 <div class="container mx-auto mt-8 text-center">

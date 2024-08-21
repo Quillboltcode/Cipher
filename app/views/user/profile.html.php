@@ -4,7 +4,7 @@ require_once 'app/views/partials/head.php';
 require_once 'app/views/partials/nav.php';
 ?>
 <?php $user = json_decode(json_encode($data),true);
-var_dump($user);
+// var_dump($user);
 ?>
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-10 p-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">

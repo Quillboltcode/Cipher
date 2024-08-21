@@ -10,11 +10,13 @@ class CommentController extends Controller
     public function __construct(){
         $this->comment = new Comment();
     }
-
-    public function create(int|null $question_id, int|null $answer_id) {
-        $user_id = $_SESSION['user_id'];
-        $body = $_POST['body'];
-        $this->comment->createComment($user_id, $question_id, $answer_id, $body);
-        header('Location: /question/' . $question_id);
+    // create question comment or answer comment
+    public function create(int $question_id) {
+        $this->view('comment/create', ['question_id' => $question_id]);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->comment->createComment($_SESSION['user_id'], $question_id, $_POST['content']);
+            header('Location: ' . URLROOT . '/question/show/' . $question_id);
+            exit;
+        }
     }
 }

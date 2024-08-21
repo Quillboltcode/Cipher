@@ -48,10 +48,18 @@ foreach ($array_data['questions'] as $question) {
             </div>';
     }
  ?>
-<?php
-
-// Todo: add pagination html
-?>
+<!-- Pagination  section -->
+<?php if ($data['pagination']['total_page'] > 1) : ?>
+    <ul class="pagination flex justify-center mb-4 mt-4">
+    <?php for ($i = 1; $i <= $data['pagination']['total_page']; $i++) : ?>
+        <li class="page-item <?= $i == $data['pagination']['page'] ? 'active' : '' ?>">
+            <a href="<?= URLROOT ?>/question/index/<?= $i ?>" class="page-link py-2 px-3 <?= $i == $data['pagination']['page'] ? 'bg-blue-500 text-white' : 'text-gray-500 hover:bg-gray-100' ?>">
+                <?= $i ?>
+            </a>
+        </li>
+    <?php endfor; ?>
+</ul>
+<?php endif; ?>
 
 
 

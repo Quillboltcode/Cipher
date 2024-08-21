@@ -1,6 +1,5 @@
 <?php
 namespace Core;
-use DateTime;
 use PDOException;
 use Core\Database;
 

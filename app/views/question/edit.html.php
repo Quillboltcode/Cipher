@@ -1,6 +1,6 @@
 <?php require_once 'app/views/partials/head.php' ?>
 <?php require_once 'app/views/partials/nav.php' ?>
-<?= var_dump($data) ?>
+
 <form action="<?= URLROOT ?>/question/edit/<?=$data['id']?>" method="post">
   <div class="max-w-md mx-auto p-4 bg-white rounded-md shadow-md">
     <h2 class="text-lg font-bold mb-4">Edit Question</h2>
