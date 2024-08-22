@@ -1,7 +1,7 @@
 <?php
 return [
   '/'=> 'controllers/HomeController.php',
-  '/users' => 'controllers/UserController.php',
+  '/user' => 'controllers/UserController.php',
   '/questions' => 'controllers/QuestionController.php',
   '/answers' => 'controllers/AnswerController.php',
   '/comments' => 'controllers/CommentController.php',

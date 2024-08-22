@@ -40,8 +40,7 @@ class Vote extends Model
 
         if ($this->db->rowCount() > 0) {
             // update the existing vote
-            // TODO: if the vote_type is the same as before, do not update the vote record
-            // if the vote_type is different, update the vote record
+
             $current_vote_type = $this->db->single()->vote_type;
             if ($current_vote_type !== $vote_type) {
                 $query = "UPDATE Votes SET vote_type = :vote_type WHERE user_id = :user_id AND question_id = :question_id";
@@ -57,6 +56,39 @@ class Vote extends Model
             $this->db->query($query);
             $this->db->bind(':user_id', $user_id);
             $this->db->bind(':question_id', $question_id);
+            $this->db->bind(':vote_type', $vote_type);
+            $this->db->execute();
+        }
+    }
+
+    public function voteanswer(int $user_id, int $answer_id, string $vote_type) {
+        // check if the user voted before
+        // if the user has already voted update the existing vote
+        // if not, create a new vote
+        error_log($vote_type);
+        $query = "SELECT * FROM cipher.Votes WHERE user_id = :user_id AND answer_id = :answer_id";
+        $this->db->query($query);
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':answer_id', $answer_id);
+        if ($this->db->rowCount() > 0) {
+            // update the existing vote
+
+            $current_vote_type = $this->db->single()->vote_type;
+            if ($current_vote_type !== $vote_type) {
+                $query = "UPDATE Votes SET vote_type = :vote_type WHERE user_id = :user_id AND answer_id = :answer_id";
+                $this->db->query($query);
+                $this->db->bind(':user_id', $user_id);
+                $this->db->bind(':answer_id', $answer_id);
+                $this->db->bind(':vote_type', $vote_type);
+                $this->db->execute();
+            }
+        } else {
+            // create a new vote
+           
+            $query = "INSERT INTO Votes (user_id, answer_id, vote_type, created_at) VALUES (:user_id, :answer_id, :vote_type, NOW())";
+            $this->db->query($query);
+            $this->db->bind(':user_id', $user_id);
+            $this->db->bind(':answer_id', $answer_id);
             $this->db->bind(':vote_type', $vote_type);
             $this->db->execute();
         }

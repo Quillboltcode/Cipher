@@ -1,11 +1,12 @@
 <?php
 
-use Core\{Controller,Authenticator};
-use Models\{Question,
-Answer,
-Comment,
-Module,
-Vote,
+use Core\{Controller, Authenticator};
+use Models\{
+    Question,
+    Answer,
+    Comment,
+    Module,
+    Vote,
 };
 // use CommentController;
 require_once 'app/models/question.php';
@@ -14,7 +15,8 @@ require_once 'app/models/comment.php';
 require_once 'app/models/module.php';
 require_once 'app/models/vote.php';
 require_once 'app/controllers/CommentController.php';
-class QuestionController extends Controller{
+class QuestionController extends Controller
+{
 
     private $questionmodel;
     private $answermodel;
@@ -23,7 +25,8 @@ class QuestionController extends Controller{
     private $modulesmodel;
     private $votemodel;
     private $CommentController;
-    public function __construct() {
+    public function __construct()
+    {
         $this->questionmodel = new Question();
         $this->answermodel = new Answer();
         $this->commentmodel = new Comment();
@@ -33,23 +36,25 @@ class QuestionController extends Controller{
         $this->CommentController = new CommentController();
     }
 
-    public function index($page = 1, $limit = 5) {
+    public function index($page = 1, $limit = 5)
+    {
         // $offset = ($page - 1) * $limit;
         $questions = $this->questionmodel->getAllQuestions($page, $limit);
         $questions_count = $this->questionmodel->countQuestions()->count;
         $data = [
             'title' => 'Questions Listing',
             'questions' => $questions ?? [],
-            'pagination'=>[
+            'pagination' => [
                 'page' => $page,
                 'limit' => $limit,
-                'total_page'=>ceil($questions_count / $limit),
+                'total_page' => ceil($questions_count / $limit),
             ]
             // 'timediff' => $timediff,
         ];
         $this->view('question/index', $data);
     }
-    public function create() {
+    public function create()
+    {
         if (!$this->authenticate->isLoggedIn()) {
             header('Location: ' . URLROOT . '/user/login');
             exit;
@@ -61,7 +66,7 @@ class QuestionController extends Controller{
                 'title' => trim($_POST['title'] ?? ''),
                 'body' => trim($_POST['body'] ?? ''),
                 'user_id' => $_SESSION['user_id'] ?? 0,
-                'image_path' => $_POST["image_path"] ?? '',
+                'image_path' => $_FILES["image_path"] ?? '',
             ];
 
             // Check for required fields
@@ -69,7 +74,33 @@ class QuestionController extends Controller{
                 header('Location: ' . URLROOT . '/question/create');
                 exit;
             }
-
+            // handle image upload
+            if (!empty($_FILES['image_path'])) {
+                $file = $_FILES['image_path'];
+                $fileName = $file['name'];
+                $fileTmpName = $file['tmp_name'];
+                $fileSize = $file['size'];
+                $fileError = $file['error'];
+                $fileType = $file['type'];
+                $fileExt = explode('.', $fileName);
+                $fileActualExt = strtolower(end($fileExt));
+                $allowed = array('jpg', 'jpeg', 'png');
+                if (in_array($fileActualExt, $allowed)) {
+                    if ($fileError === 0) {
+                        // Limit file size to 6MB with ratio of 1920*1080 RGB color 24 bit color, 3 bit per pixel
+                        // Source https://stackoverflow.com/questions/63464736/image-maximum-file-size-based-on-image-dimension
+                        if ($fileSize < 6000000) {
+                            // Create unique file name based on timestamp
+                            // This could be a problem if multiple people upload the same image at the same time
+                            // This coudld be abused to upload malicious files
+                            $fileNameNew = uniqid('', true) . "." . $fileActualExt;
+                            $fileDestination = UPLOAD_DOCUMENTS . $fileNameNew;
+                            move_uploaded_file($fileTmpName, $fileDestination);
+                            $data['image_path'] = $fileDestination;
+                        }
+                    }
+                }
+            }
             try {
                 // Create question
                 $question_id = $this->questionmodel->createQuestion($data);
@@ -86,7 +117,8 @@ class QuestionController extends Controller{
         $this->view('question/create', $data);
     }
 
-    public function show(int $questionId) {
+    public function show(int $questionId)
+    {
 
         $question = $this->questionmodel->getQuestionById($questionId);
         // Check if the question ID is valid
@@ -94,9 +126,9 @@ class QuestionController extends Controller{
             $this->view('404');
             return;
         }
-        $question_votecount = 
-        // Get all answer related to the question
-        $answer = $this->answermodel->getAnswerByQuestionID($questionId);
+        $question_votecount =
+            // Get all answer related to the question
+            $answer = $this->answermodel->getAnswerByQuestionID($questionId);
 
         // Get all comments related to the question
         $comment = $this->commentmodel->getCommentByQuestionId($questionId);
@@ -111,7 +143,8 @@ class QuestionController extends Controller{
         $this->view('question/show', $data);
     }
 
-    public function edit(int $questionId) {
+    public function edit(int $questionId)
+    {
         //validate if user logged in
         // redirect to login if not
         if (!$this->authenticate->isLoggedIn()) {
@@ -138,14 +171,14 @@ class QuestionController extends Controller{
             ];
             $this->view('question/edit', $data);
         }
-        
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $errors = [];
             $data = [
                 'user_id' => $_SESSION['user_id'],
                 'title' => ($_POST['title']),
                 'body' => ($_POST['body']),
-                'image_path' => '',
+                'image_path' => $_FILES['image_path']??'',
             ];
 
             if (empty($data['title'])) {
@@ -159,16 +192,45 @@ class QuestionController extends Controller{
                 $this->view('question/edit', $data);
                 exit;
             }
+            error_log(print_r($_FILES, true));
+            if (!empty($_FILES['image_path']['name'])) {
+                $file = $_FILES['image_path'];
+                $fileName = $file['name'];
+                $fileTmpName = $file['tmp_name'];
+                $fileSize = $file['size'];
+                $fileError = $file['error'];
+                $fileType = $file['type'];
+                $fileExt = explode('.', $fileName);
+                $fileActualExt = strtolower(end($fileExt));
 
-            $this->questionmodel->updateQuestion($questionId,$data);
-            $this->modulesmodel->updateQuestionModule($questionId, $_POST['module_names']);
-            header('Location: ' . URLROOT . '/question/' . $questionId);
+                $allowed = array('jpg', 'jpeg', 'png','JPG', 'JPEG', 'PNG'); // Add more extensions as needed
+
+                if (in_array($fileActualExt, $allowed)) {
+                    if ($fileError === 0) {
+                        if ($fileSize < 5000000) {
+                            $fileNameNew = uniqid('', true) . "." . $fileActualExt;
+                            $fileDestination = UPLOAD_DOCUMENTS . $fileNameNew;
+                            move_uploaded_file($fileTmpName, $fileDestination);
+                            $data['image_path'] = $fileNameNew;
+                        }
+                    }
+                }
+            }
+
+            $this->questionmodel->updateQuestion($questionId, $data);
+            // if not emty modules then update
+            if (!empty($_POST['module_names'])) {
+                $this->modulesmodel->updateQuestionModule($questionId, $_POST['module_names']);
+            }
+            
+            header('Location: ' . URLROOT . '/question/show/' . $questionId);
             exit;
 
         }
     }
 
-    public function delete(int $questionId) {
+    public function delete(int $questionId)
+    {
         //validate if user logged in
         // redirect to login if not
         if (!$this->authenticate->isLoggedIn()) {
@@ -187,17 +249,51 @@ class QuestionController extends Controller{
         exit;
     }
 
-    public function vote(int $questionId) {
+    public function vote(int $questionId)
+    {
         $this->votemodel->vote($_SESSION['user_id'], $questionId, $_POST['vote_type']);
         header('Location: ' . URLROOT . '/question/show/' . $questionId);
         exit;
     }
 
 
-    public function comment(int $questionId) {
+    public function comment(int $questionId)
+    {
         $this->CommentController->create($questionId);
 
         header('Location: ' . URLROOT . '/question/show/' . $questionId);
         exit;
     }
+
+    public function search($page = 1, $limit = 5)
+    {
+        $search = $_GET['search'] ?? '';
+        if (empty($search)) {
+            header('Location: ' . URLROOT . '/question');
+            exit;
+        }
+        // unwrap array of result
+
+        $result = $this->questionmodel->searchQuestions($search);
+        // notfound 
+        if (empty($result['questions'])) {
+            $this->view('question/notfound', ['search' => $search]);
+            exit;
+        }
+        $question = $result['questions'];
+        $questions_count = $result['count'];
+
+
+        $data = [
+            'title' => 'Search Results',
+            'questions' => $question,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total_page' => ceil($questions_count / $limit)
+            ]
+        ];
+        $this->view('question/index', $data);
+    }
+
 }

@@ -15,7 +15,7 @@ require_once 'app/views/partials/nav.php';
   </ul>
   <h3 class="text-lg font-bold mb-2">Get in Touch</h3>
   <p class="text-gray-600 mb-2">If you have any questions, feedback, or just want to say hello, please don't hesitate to reach out to us.</p>
-  <p class="text-gray-600 mb-4">Email: <a href="mailto:admin@example.com" class="text-blue-500 hover:text-blue-700">admin@example.com</a></p>
+  <p class="text-gray-600 mb-4">Email: <a href="mailto:<?=htmlspecialchars($data['email'])?>" class="text-blue-500 hover:text-blue-700"><?=htmlspecialchars($data['email'])?></a></p>
 
 </div>
 

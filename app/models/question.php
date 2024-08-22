@@ -72,7 +72,7 @@ class Question extends Model {
      * @return array|null The question data, including the username, vote count and module names.
      */
     public function getQuestionById(int $questionId): ?object {
-        $query = 'SELECT Questions.question_id, Questions.user_id, Questions.title, Questions.body, Questions.image_path, Questions.created_at, Questions.updated_at, Users.username, 
+        $query = 'SELECT Questions.question_id, Questions.user_id, Questions.title, Questions.body, Questions.image_path, Questions.created_at, Questions.updated_at, Users.username, Users.avatar,
         (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id AND Votes.vote_type = "upvote") AS upvotes,
         (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id AND Votes.vote_type = "downvote") AS downvotes,
         (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id) AS vote_count,
@@ -163,6 +163,29 @@ class Question extends Model {
         $this->executeQuery($query, $params);
         return true;
     }
-
     
+    public function searchQuestions(string $queryString, int $page = 1, int $questionsPerPage = 5): array
+    {   
+        $searchPattern = '%' . $queryString . '%';
+        $offset = ($page - 1) * $questionsPerPage;
+
+        $query = 'SELECT Questions.question_id, Questions.user_id, Questions.title, Questions.body, Questions.image_path, Users.username, 
+        (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id AND Votes.vote_type = "upvote") AS upvotes,
+        (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id AND Votes.vote_type = "downvote") AS downvotes,
+        GROUP_CONCAT(DISTINCT CONCAT(Modules.module_name, ":")) AS module_name
+        FROM Questions
+        JOIN Users ON Questions.user_id = Users.user_id
+        JOIN QuestionModules ON Questions.question_id = QuestionModules.question_id
+        JOIN Modules ON QuestionModules.module_id = Modules.module_id
+        WHERE Questions.title LIKE :searchPattern OR Questions.body LIKE :searchPattern
+        GROUP BY Questions.question_id
+        LIMIT :limit OFFSET :offset';
+        $this->db->query($query);
+        $this->db->bind(':searchPattern', $searchPattern);
+        $this->db->bind(':limit', $questionsPerPage, \PDO::PARAM_INT);
+        $this->db->bind(':offset', $offset, \PDO::PARAM_INT);
+        
+        return [ 'question'=> $this->db->resultSet(),
+                  'count'  => $this->db->rowCount(),];
+    }
 }

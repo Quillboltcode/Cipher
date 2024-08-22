@@ -62,6 +62,12 @@ class Answer extends Model {
         return $this->getSingle($query, $params);
     }
 
+    // Find answer question_id
+    public function getQuestionIDByAnswerID(int $answerID) { 
+        $query = 'SELECT question_id FROM Answers WHERE answer_id = :answerID';
+        $params = [':answerID' => $answerID];
+        return $this->getSingle($query, $params);
+    }
     public function countAnswers() {
         $this->db->query("SELECT COUNT(*) as count FROM Answers");
         return $this->db->single();

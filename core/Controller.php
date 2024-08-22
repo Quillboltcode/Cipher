@@ -5,6 +5,9 @@ use DateTime;
 class Controller {
 
     public function view($view, $data = []) {
+        if (!file_exists('app/views/' . $view . '.html.php')) {
+            require_once './app/views/404.html.php';
+        }
         require_once 'app/views/' . $view . '.html.php';
     }
 
@@ -12,7 +15,7 @@ class Controller {
     public function render($file, $data = []) {
         $viewFile = 'app/views/' . $file . '.html.php';
         if (!file_exists($viewFile)) {
-            $viewFile = './app/views/404.php';
+            $viewFile = './app/views/404.html.php';
         }
         extract($data);
         ob_start();

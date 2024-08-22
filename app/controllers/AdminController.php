@@ -41,5 +41,45 @@ class AdminController extends Controller
         $this->view('admin/index', $data);
     }
 
+    public function edit(int $moduleid){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $module = $this->modulemodel->getModuleById($moduleid);
+            // Validate and sanitize form data
+            $data = [
+                'module_name' => trim($_POST['module_name'] ?? $module->module_name),
+                'description' => trim($_POST['description'] ?? $module->description),
+            ];
+            $this->modulemodel->updateModule($moduleid, $data);
+            header('Location: ' . URLROOT . '/admin/index');
+        }
+    }
+
+    public function createmodule(){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Validate and sanitize form data
+
+            $data = [
+                'module_name' => trim($_POST['module_name'] ?? ''),
+                'description' => trim($_POST['description'] ?? ''),
+            ];
+            error_log(print_r($data, true));
+            $this->modulemodel->createModule($data);
+            header('Location: ' . URLROOT . '/admin/index');
+        }
+    }
+
+    public function deletemodule(int $moduleid): bool{
+        $this->modulemodel->deleteModule($moduleid);
+        header('Location: ' . URLROOT . '/admin/index');
+        exit;
+    }
+
+    public function deletequestion(int $questionId): bool
+    {
+         $this->questionmodel->deleteQuestion($questionId);
+         header('Location: ' . URLROOT . '/admin/index');
+         exit;
+    }
+
 
 }

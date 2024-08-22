@@ -45,7 +45,9 @@ foreach ($array_data['questions'] as $question) {
                         </div>
                     </div>
                 </div>
-            </div>';
+            </div>
+            <div class="border-t border-gray-300 my-4"></div>
+            ';
     }
  ?>
 <!-- Pagination  section -->

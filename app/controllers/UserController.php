@@ -81,7 +81,7 @@ class UserController extends Controller {
 
     public function profile() {
         if (!$this->auth->isLoggedIn()) {
-            header('Location: ' . URLROOT . '/users/login');
+            header('Location: ' . URLROOT . '/user/login');
             exit;
         }
         // Get user profile from database
@@ -96,7 +96,7 @@ class UserController extends Controller {
     }
     public function edit() {
         if (!$this->auth->isLoggedIn()) {
-            header('Location: ' . URLROOT . '/users/login');
+            header('Location: ' . URLROOT . '/user/login');
             exit;
         }
         $user = $this->usermodel->getUserById($_SESSION['user_id']);

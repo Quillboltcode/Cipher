@@ -10,7 +10,7 @@ require_once './app/views/partials/nav.php';
 ?>
 <div class="max-w-md mx-auto p-4 bg-white rounded shadow-md">
   <h2 class="text-lg font-bold mb-4">Create a Question</h2>
-  <form action="<?= URLROOT ?>/question/create" method="post">
+  <form action="<?= URLROOT ?>/question/create" method="post" enctype="multipart/form-data">
     <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="title">Title</label>
       <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" name="title" required>
