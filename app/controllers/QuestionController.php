@@ -272,16 +272,21 @@ class QuestionController extends Controller
             header('Location: ' . URLROOT . '/question');
             exit;
         }
+        if (strlen($search)<4) {
+            $this->view('question/notfound', ['search' => 'Please enter at least 3 or more characters']);
+            exit;
+        }
         // unwrap array of result
 
         $result = $this->questionmodel->searchQuestions($search);
+        // error_log(print_r($result, true));
         // notfound 
-        if (empty($result['questions'])) {
+        if (empty($result['question'])) {
             $this->view('question/notfound', ['search' => $search]);
             exit;
         }
-        $question = $result['questions'];
-        $questions_count = $result['count'];
+        $question = $result['question'];
+        $questions_count = count($question);
 
 
         $data = [

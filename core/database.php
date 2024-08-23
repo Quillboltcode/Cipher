@@ -93,4 +93,10 @@ class Database {
     public function getError() {
         return $this->error;
     }
+
+
+    public function __destruct() {
+        $this->stmt = null;
+        $this->dbh = null;
+    }
 }

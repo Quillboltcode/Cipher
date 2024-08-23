@@ -4,7 +4,7 @@ require_once './app/views/partials/nav.php';
 ?>
 
 <?php $data = json_decode(json_encode($data), true);
-var_dump($data);
+// var_dump($data);
 ?>
 
 <!-- Module Table -->
@@ -75,6 +75,30 @@ var_dump($data);
                 <td class="border px-4 py-2"><?php echo $question['title']; ?></td>
                 <td class="border px-4 py-2">
                     <form action="<?= URLROOT . '/admin/deletequestion/' . $question['question_id'] ?>" method="post">
+                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
+
+<!-- User Table -->
+<table class="table-auto w-full">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="px-4 py-2">User ID</th>
+            <th class="px-4 py-2">Username</th>
+            <th class="px-4 py-2">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($data['user'] as $user) { ?>
+            <tr>
+                <td class="border px-4 py-2"><?php echo $user['user_id']; ?></td>
+                <td class="border px-4 py-2"><?php echo $user['username']; ?></td>
+                <td class="border px-4 py-2">
+                    <form action="<?= URLROOT . '/admin/deleteuser/' . $user['user_id'] ?>" method="post">
                         <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
                     </form>
                 </td>

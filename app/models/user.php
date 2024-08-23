@@ -91,5 +91,11 @@ class User extends Model
         $this->db->query("SELECT COUNT(*) as count FROM Users");
         return $this->db->single()->count;
     }
+
+    public function deleteUser($id){
+        $this->db->query("DELETE FROM Users WHERE user_id = :id");
+        $this->db->bind(':id', $id);
+        $this->db->execute();
+    }
 }   
 

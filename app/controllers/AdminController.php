@@ -1,19 +1,21 @@
 <?php
 
 use Core\{Controller,Authenticator};
-use Models\{Module,Question,Answer};
+use Models\{Module,Question,Answer,User};
 require_once 'app/models/Module.php';
 require_once 'app/models/Question.php';
 require_once 'app/models/Answer.php';
-
+require_once 'app/models/User.php';
 class AdminController extends Controller
 {
     private $authenticate;
     private $modulemodel;
     private $questionmodel;
+    private $usermodel;
     public function __construct()
     {
         $this->authenticate = new Authenticator();
+
         if (!$this->authenticate->isAdmin()) {
 
             header('Location: ' . URLROOT . '/user/login');
@@ -23,6 +25,7 @@ class AdminController extends Controller
         $this->modulemodel = new Module();
         $this->questionmodel = new Question();
         $this->answermodel = new Answer();
+        $this->usermodel = new User();
 
     }
 
@@ -31,11 +34,11 @@ class AdminController extends Controller
 
         $modules = $this->modulemodel->getAllMoudules();
         $questions = $this->questionmodel->getAllQuestions();
-        
+        $user = $this->usermodel->getAllUsers();
         $data = [
             'modules' => $modules,
             'questions' => $questions,
-            
+            'user'=> $user,
         ];
 
         $this->view('admin/index', $data);
@@ -81,5 +84,11 @@ class AdminController extends Controller
          exit;
     }
 
+    public function deleteuser(int $userId): bool
+    {
+        $this->usermodel->deleteUser($userId);
+        header('Location: ' . URLROOT . '/admin/index');
+        exit;
+    }
 
 }

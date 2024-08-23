@@ -165,27 +165,31 @@ class Question extends Model {
     }
     
     public function searchQuestions(string $queryString, int $page = 1, int $questionsPerPage = 5): array
-    {   
-        $searchPattern = '%' . $queryString . '%';
+    {
+        $searchPattern =  $queryString  ;
         $offset = ($page - 1) * $questionsPerPage;
 
-        $query = 'SELECT Questions.question_id, Questions.user_id, Questions.title, Questions.body, Questions.image_path, Users.username, 
-        (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id AND Votes.vote_type = "upvote") AS upvotes,
-        (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Questions.question_id AND Votes.vote_type = "downvote") AS downvotes,
-        GROUP_CONCAT(DISTINCT CONCAT(Modules.module_name, ":")) AS module_name
-        FROM Questions
-        JOIN Users ON Questions.user_id = Users.user_id
-        JOIN QuestionModules ON Questions.question_id = QuestionModules.question_id
-        JOIN Modules ON QuestionModules.module_id = Modules.module_id
-        WHERE Questions.title LIKE :searchPattern OR Questions.body LIKE :searchPattern
-        GROUP BY Questions.question_id
-        LIMIT :limit OFFSET :offset';
+        $query = 'SELECT Q.question_id, Q.user_id, Q.title, Q.body, Q.created_at, Q.updated_at, Q.image_path, 
+                (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Q.question_id AND Votes.vote_type = "upvote") AS upvotes,
+                (SELECT COUNT(*) FROM Votes WHERE Votes.question_id = Q.question_id AND Votes.vote_type = "downvote") AS downvotes,
+                  U.username,
+                  GROUP_CONCAT(M.module_name) AS module_names
+                  FROM Questions Q
+                  LEFT JOIN Votes V ON Q.question_id = V.question_id
+                  LEFT JOIN Users U ON Q.user_id = U.user_id
+                  LEFT JOIN QuestionModules QM ON Q.question_id = QM.question_id
+                  LEFT JOIN Modules M ON QM.module_id = M.module_id
+                  WHERE MATCH (Q.body, Q.title) AGAINST (:searchPattern IN NATURAL LANGUAGE MODE)
+                  GROUP BY Q.question_id
+                  ORDER BY Q.created_at DESC
+                  LIMIT :limit
+                  OFFSET :offset';
+
         $this->db->query($query);
         $this->db->bind(':searchPattern', $searchPattern);
         $this->db->bind(':limit', $questionsPerPage, \PDO::PARAM_INT);
         $this->db->bind(':offset', $offset, \PDO::PARAM_INT);
         
-        return [ 'question'=> $this->db->resultSet(),
-                  'count'  => $this->db->rowCount(),];
+        return ['question'=> $this->db->resultSet()];
     }
 }

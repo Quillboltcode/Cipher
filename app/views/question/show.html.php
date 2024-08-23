@@ -7,7 +7,7 @@ require_once 'app/views/partials/nav.php';
 <?php
 
 $array_data = json_decode(json_encode($data), true);
-var_dump($array_data['question']);
+// var_dump($array_data['question']);
 // var_dump($array_data['comment']);
 // var_dump($array_data['answer']);
 ?>
@@ -39,7 +39,7 @@ var_dump($array_data['question']);
         <?php if (!empty($array_data['question']['image_path'])): ?>
           
         <img src="<?= UPLOAD_PATH.htmlspecialchars($array_data['question']['image_path']) ?>"
-          alt="<?= htmlspecialchars($array_data['question']['image_path']) ?>" class="">
+          alt="<?= htmlspecialchars($array_data['question']['image_path']) ?>" class="w-64 h-64">
         <?php endif; ?>
       </p>
 

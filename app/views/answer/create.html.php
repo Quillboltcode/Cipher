@@ -3,7 +3,7 @@ require_once './app/views/partials/head.php';
 require_once './app/views/partials/nav.php';
 ?>
 <?php 
-var_dump($data);?>
+// var_dump($data);?>
 
 <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
     <h1 class="text-2xl font-bold mb-4">Create Answer</h1>
