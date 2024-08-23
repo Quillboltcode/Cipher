@@ -96,7 +96,7 @@ class QuestionController extends Controller
                             $fileNameNew = uniqid('', true) . "." . $fileActualExt;
                             $fileDestination = UPLOAD_DOCUMENTS . $fileNameNew;
                             move_uploaded_file($fileTmpName, $fileDestination);
-                            $data['image_path'] = $fileDestination;
+                            $data['image_path'] = $fileNameNew;
                         }
                     }
                 }

@@ -4,7 +4,11 @@ require_once 'app/views/partials/head.php';
 require_once 'app/views/partials/nav.php';
 ?>
 
-
+<?php if (isset($data['error'])) : ?>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <?= $data['error'] ?>
+  </div>
+<?php endif; ?>
 
 
 <form action="<?php echo URLROOT; ?>/user/login" method="POST" class="max-w-sm mx-auto">

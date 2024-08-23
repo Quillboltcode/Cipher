@@ -11,14 +11,14 @@
                 <h3 class="font-semibold text-gray-700">Web</h3>
                 <ul class="space-y-1">
                     <li><a href="<?php echo URLROOT; ?>/about" class="text-gray-600 hover:text-gray-800">About</a></li>
-                    <li><a href="<?php echo URLROOT; ?>/careers" class="text-gray-600 disabled: hover:text-gray-800">Careers</a></li>
+                    <li><a href="<?php echo URLROOT; ?>/question" class="text-gray-600 disabled hover:text-gray-800">Questions</a></li>
                     <li><a href="<?php echo URLROOT; ?>/contact" class="text-gray-600 hover:text-gray-800">Contact</a></li>
                 </ul>
             </div>
             <div class="space-y-2">
                 <h3 class="font-semibold text-gray-700">Resources</h3>
                 <ul class="space-y-1">
-                    <li><a href="<?php echo URLROOT; ?>/help" class="text-gray-600 disabled: hover:text-gray-800">Help Center</a></li>
+                    <li><a href="<?php echo URLROOT; ?>/help" class="text-gray-600 disabled: hover:text-gray-800 pointer-events-none cursor-auto">Help Center</a></li>
                     <li><a href="<?php echo URLROOT; ?>/admin" class="text-gray-600 hover:text-gray-800">Admin</a></li>
                 </ul>
             </div>

@@ -151,6 +151,7 @@ class UserController extends Controller {
                 }
                 // Turn $user object into an array and rename attribute avatar to image_path
                 $userData = (array) $user;
+                error_log(print_r($userData, true));
                 
                     
                 $this->usermodel->updateUser($_SESSION['user_id'], $userData);
@@ -161,5 +162,16 @@ class UserController extends Controller {
                 header('Location: ' . URLROOT . '/user/profile');
             }
         }
+    }
+
+    public function delete() {
+        if (!$this->auth->isLoggedIn()) {
+            header('Location: ' . URLROOT . '/user/login');
+            exit;
+        }
+
+        $this->usermodel->deleteUser($_SESSION['user_id']);
+        $this->auth->logout();
+        header('Location: ' . URLROOT . '/user/login');
     }
 }
